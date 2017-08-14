@@ -67,51 +67,22 @@ function nextNode(root, start) {
  * @param {!Set<Node>=} visitedImports
  */
 export function walkDeepDescendantElements(root, callback, visitedImports = new Set()) {
-  let node = root;
-  while (node) {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const element = /** @type {!Element} */(node);
+  // Firefox-specific wrapper to walk tree (including XBL / XUL / anon content)
+  let Ci = Components.interfaces;
+  let Cc = Components.classes;
+  let walker = Components.classes["@mozilla.org/inspector/deep-tree-walker;1"].
+               createInstance(Components.interfaces.inIDeepTreeWalker);
+  walker.showAnonymousContent = true;
+  walker.showSubDocuments = false;
+  walker.showDocumentsAsNodes = false;
+  walker.init(root, Ci.nsIDOMNodeFilter.SHOW_ELEMENT);
 
-      callback(element);
+  callback(root);
 
-      const localName = element.localName;
-      if (localName === 'link' && element.getAttribute('rel') === 'import') {
-        // If this import (polyfilled or not) has it's root node available,
-        // walk it.
-        const importNode = /** @type {!Node} */ (element.import);
-        if (importNode instanceof Node && !visitedImports.has(importNode)) {
-          // Prevent multiple walks of the same import root.
-          visitedImports.add(importNode);
-
-          for (let child = importNode.firstChild; child; child = child.nextSibling) {
-            walkDeepDescendantElements(child, callback, visitedImports);
-          }
-        }
-
-        // Ignore descendants of import links to prevent attempting to walk the
-        // elements created by the HTML Imports polyfill that we just walked
-        // above.
-        node = nextSiblingOrAncestorSibling(root, element);
-        continue;
-      } else if (localName === 'template') {
-        // Ignore descendants of templates. There shouldn't be any descendants
-        // because they will be moved into `.content` during construction in
-        // browsers that support template but, in case they exist and are still
-        // waiting to be moved by a polyfill, they will be ignored.
-        node = nextSiblingOrAncestorSibling(root, element);
-        continue;
-      }
-
-      // Walk shadow roots.
-      const shadowRoot = element.__CE_shadowRoot;
-      if (shadowRoot) {
-        for (let child = shadowRoot.firstChild; child; child = child.nextSibling) {
-          walkDeepDescendantElements(child, callback, visitedImports);
-        }
-      }
+  while (walker.nextNode()) {
+    if (walker.currentNode instanceof Element) {
+      callback(walker.currentNode);
     }
-
-    node = nextNode(root, node);
   }
 }
 
