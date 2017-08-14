@@ -25,12 +25,22 @@ const CustomElementState = {
  */
 let CustomElementDefinition;
 
+let Components = {
+  interfaces: {
+    inIDeepTreeWalker: true,
+    nsIDOMNodeFilter: {
+      SHOW_ELEMENT: true,
+    }
+  },
+  classes: {},
+}
 
 // These properties are defined in the closure externs so that they will not be
 // renamed during minification.
 
 // Used for both Documents and Nodes which represent documents in the HTML
 // Imports polyfill.
+
 
 /** @type {boolean|undefined} */
 Node.prototype.__CE_hasRegistry;
