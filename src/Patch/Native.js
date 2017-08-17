@@ -25,7 +25,7 @@ export default {
   Element_after: window.Element.prototype['after'],
   Element_replaceWith: window.Element.prototype['replaceWith'],
   Element_remove: window.Element.prototype['remove'],
-  HTMLElement: window.HTMLElement,
-  HTMLElement_innerHTML: Object.getOwnPropertyDescriptor(window.HTMLElement.prototype, 'innerHTML'),
-  HTMLElement_insertAdjacentElement: window.HTMLElement.prototype['insertAdjacentElement'],
+  XULElement: window.XULElement,
+  XULElement_innerHTML: Object.getOwnPropertyDescriptor(window.XULElement.prototype, 'innerHTML'),
+  XULElement_insertAdjacentElement: window.XULElement.prototype['insertAdjacentElement'],
 };

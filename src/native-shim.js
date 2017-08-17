@@ -13,13 +13,13 @@
  * implementations of Custom Elements.
  *
  * ES5-style classes don't work with native Custom Elements because the
- * HTMLElement constructor uses the value of `new.target` to look up the custom
+ * XULElement constructor uses the value of `new.target` to look up the custom
  * element definition for the currently called constructor. `new.target` is only
  * set when `new` is called and is only propagated via super() calls. super()
  * is not emulatable in ES5. The pattern of `SuperClass.call(this)`` only works
  * when extending other ES5-style classes, and does not propagate `new.target`.
  *
- * This shim allows the native HTMLElement constructor to work by generating and
+ * This shim allows the native XULElement constructor to work by generating and
  * registering a stand-in class instead of the users custom element class. This
  * stand-in class's constructor has an actual call to super().
  * `customElements.define()` and `customElements.get()` are both overridden to
@@ -29,9 +29,9 @@
  * in, the stand-in's constructor swizzles its instances prototype and invokes
  * the user-defined constructor. When the user-defined constructor is called
  * directly it creates an instance of the stand-in class to get a real extension
- * of HTMLElement and returns that.
+ * of XULElement and returns that.
  *
- * There are two important constructors: A patched HTMLElement constructor, and
+ * There are two important constructors: A patched XULElement constructor, and
  * the StandInElement constructor. They both will be called to create an element
  * but which is called first depends on whether the browser creates the element
  * or the user-defined constructor is called directly. The variables
@@ -64,7 +64,7 @@
   // Do nothing if `customElements` does not exist.
   if (!window.customElements) return;
 
-  const NativeHTMLElement = window.HTMLElement;
+  const NativeXULElement = window.XULElement;
   const nativeDefine = window.customElements.define;
   const nativeGet = window.customElements.get;
 
@@ -95,7 +95,7 @@
    */
   let userConstruction = false;
 
-  window.HTMLElement = function() {
+  window.XULElement = function() {
     if (!browserConstruction) {
       const tagname = tagnameByConstructor.get(this.constructor);
       const fakeClass = nativeGet.call(window.customElements, tagname);
@@ -106,21 +106,21 @@
       return instance;
     }
     // Else do nothing. This will be reached by ES5-style classes doing
-    // HTMLElement.call() during initialization
+    // XULElement.call() during initialization
     browserConstruction = false;
   };
-  // By setting the patched HTMLElement's prototype property to the native
-  // HTMLElement's prototype we make sure that:
-  //     document.createElement('a') instanceof HTMLElement
-  // works because instanceof uses HTMLElement.prototype, which is on the
+  // By setting the patched XULElement's prototype property to the native
+  // XULElement's prototype we make sure that:
+  //     document.createElement('a') instanceof XULElement
+  // works because instanceof uses XULElement.prototype, which is on the
   // ptototype chain of built-in elements.
-  window.HTMLElement.prototype = NativeHTMLElement.prototype;
+  window.XULElement.prototype = NativeXULElement.prototype;
 
   const define = (tagname, elementClass) => {
     const elementProto = elementClass.prototype;
-    const StandInElement = class extends NativeHTMLElement {
+    const StandInElement = class extends NativeXULElement {
       constructor() {
-        // Call the native HTMLElement constructor, this gives us the
+        // Call the native XULElement constructor, this gives us the
         // under-construction instance as `this`:
         super();
 
@@ -130,7 +130,7 @@
 
         if (!userConstruction) {
           // Make sure that user-defined constructor bottom's out to a do-nothing
-          // HTMLElement() call
+          // XULElement() call
           browserConstruction = true;
           // Call the user-defined constructor on our instance:
           elementClass.call(this);

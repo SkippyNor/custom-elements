@@ -76,8 +76,8 @@ export default function(internals) {
 
   if (Native.Element_innerHTML && Native.Element_innerHTML.get) {
     patch_innerHTML(Element.prototype, Native.Element_innerHTML);
-  } else if (Native.HTMLElement_innerHTML && Native.HTMLElement_innerHTML.get) {
-    patch_innerHTML(HTMLElement.prototype, Native.HTMLElement_innerHTML);
+  } else if (Native.XULElement_innerHTML && Native.XULElement_innerHTML.get) {
+    patch_innerHTML(XULElement.prototype, Native.XULElement_innerHTML);
   } else {
 
     /** @type {HTMLDivElement} */
@@ -219,8 +219,8 @@ export default function(internals) {
       });
   }
 
-  if (Native.HTMLElement_insertAdjacentElement) {
-    patch_insertAdjacentElement(HTMLElement.prototype, Native.HTMLElement_insertAdjacentElement);
+  if (Native.XULElement_insertAdjacentElement) {
+    patch_insertAdjacentElement(XULElement.prototype, Native.XULElement_insertAdjacentElement);
   } else if (Native.Element_insertAdjacentElement) {
     patch_insertAdjacentElement(Element.prototype, Native.Element_insertAdjacentElement);
   } else {
