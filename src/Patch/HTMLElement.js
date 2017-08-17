@@ -7,11 +7,11 @@ import AlreadyConstructedMarker from '../AlreadyConstructedMarker.js';
  * @param {!CustomElementInternals} internals
  */
 export default function(internals) {
-  window['HTMLElement'] = (function() {
+  window['XULElement'] = (function() {
     /**
-     * @type {function(new: HTMLElement): !HTMLElement}
+     * @type {function(new: XULElement): !XULElement}
      */
-    function HTMLElement() {
+    function XULElement() {
       // This should really be `new.target` but `new.target` can't be emulated
       // in ES5. Assuming the user keeps the default value of the constructor's
       // prototype's `constructor` property, this is equivalent.
@@ -37,18 +37,18 @@ export default function(internals) {
       const lastIndex = constructionStack.length - 1;
       const element = constructionStack[lastIndex];
       if (element === AlreadyConstructedMarker) {
-        throw new Error('The HTMLElement constructor was either called reentrantly for this constructor or called multiple times.');
+        throw new Error('The XULElement constructor was either called reentrantly for this constructor or called multiple times.');
       }
       constructionStack[lastIndex] = AlreadyConstructedMarker;
 
       Object.setPrototypeOf(element, constructor.prototype);
-      internals.patch(/** @type {!HTMLElement} */ (element));
+      internals.patch(/** @type {!XULElement} */ (element));
 
       return element;
     }
 
-    HTMLElement.prototype = Native.HTMLElement.prototype;
+    XULElement.prototype = Native.XULElement.prototype;
 
-    return HTMLElement;
+    return XULElement;
   })();
 };

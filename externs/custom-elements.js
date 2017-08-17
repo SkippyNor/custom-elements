@@ -35,6 +35,8 @@ let Components = {
   classes: {},
 }
 
+let XULElement;
+
 // These properties are defined in the closure externs so that they will not be
 // renamed during minification.
 

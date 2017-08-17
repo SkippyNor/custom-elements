@@ -11,7 +11,7 @@
 import CustomElementInternals from './CustomElementInternals.js';
 import CustomElementRegistry from './CustomElementRegistry.js';
 
-import PatchHTMLElement from './Patch/HTMLElement.js';
+import PatchXULElement from './Patch/HTMLElement.js';
 import PatchDocument from './Patch/Document.js';
 import PatchNode from './Patch/Node.js';
 import PatchElement from './Patch/Element.js';
@@ -25,7 +25,7 @@ if (!priorCustomElements ||
   /** @type {!CustomElementInternals} */
   const internals = new CustomElementInternals();
 
-  PatchHTMLElement(internals);
+  PatchXULElement(internals);
   PatchDocument(internals);
   PatchNode(internals);
   PatchElement(internals);
