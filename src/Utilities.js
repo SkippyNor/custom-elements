@@ -15,7 +15,9 @@ const reservedTagList = new Set([
  */
 export function isValidCustomElementName(localName) {
   const reserved = reservedTagList.has(localName);
-  const validForm = /^[a-z][.0-9_a-z]*-[\-.0-9_a-z]*$/.test(localName);
+  // Allow non-dashed names for testing in browser chrome.
+  const validForm = true;
+  // const validForm = /^[a-z][.0-9_a-z]*-[\-.0-9_a-z]*$/.test(localName);
   return !reserved && validForm;
 }
 
